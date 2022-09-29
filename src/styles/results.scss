@@ -1,0 +1,55 @@
+#results {
+  .backdrop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 500px;
+    max-height: 100vh;
+    padding: 1rem;
+    border: 1px solid #1a1a1b;
+    border-radius: 0.5rem;
+    color: #fff;
+    background-color: #121213;
+    box-shadow: 0 4px 23px 0 rgb(0 0 0 / 20%);
+  }
+  section {
+    text-align: center;
+  }
+
+  section div {
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0.75rem 0;
+  }
+
+  section time {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+  button {
+    height: 52px;
+    width: 80%;
+    border: none;
+    border-radius: 6.25rem;
+    color: inherit;
+    background-color: hsl(115, 29%, 43%);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    margin: 0.75rem 0;
+  }
+}

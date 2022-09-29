@@ -1,0 +1,44 @@
+/* Main */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#wordleForGood {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: v-bind("height");
+  font-size: clamp(0.5rem, 3vmin, 1rem);
+  background-color: v-bind("bgColor");
+  color: v-bind("textColor");
+  overflow: hidden;
+  touch-action: manipulation;
+  min-height: 670px;
+}
+
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+  justify-content: space-between;
+}

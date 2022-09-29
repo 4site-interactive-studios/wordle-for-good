@@ -1,0 +1,10 @@
+/* Header */
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: v-bind("textColor");
+  height: 50px;
+  width: 100%;
+  font-size: 2.25rem;
+}

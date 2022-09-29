@@ -1,0 +1,70 @@
+/* Gameboard */
+#gameboard {
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  .gameboard {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 0.3125rem;
+    width: 350px;
+    height: 420px;
+    padding: 10px;
+  }
+
+  .tile {
+    font-size: 2rem;
+    color: v-bind("tileTextColor");
+    border: 0.05em solid v-bind(tileBorderColor);
+    background-color: v-bind(tileBgColor);
+    width: 100%;
+    height: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    transition: transform 250ms linear;
+  }
+
+  .tile[data-state="active"] {
+    border-color: v-bind(tileBorderActiveColor);
+    background-color: v-bind(tileBgActiveColor);
+  }
+
+  .tile[data-state="wrong"] {
+    border: none;
+    background-color: hsl(240, 2%, 23%);
+    color: white;
+  }
+
+  .tile[data-state="wrong-location"] {
+    border: none;
+    background-color: hsl(49, 51%, 47%);
+    color: white;
+  }
+
+  .tile[data-state="correct"] {
+    border: none;
+    background-color: hsl(115, 29%, 43%);
+    color: white;
+  }
+
+  .tile.shake {
+    animation: shake 250ms ease-in-out;
+  }
+
+  .tile.dance {
+    animation: dance 500ms ease-in-out;
+  }
+
+  .tile.flip {
+    transform: rotateX(90deg);
+  }
+}
