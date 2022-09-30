@@ -9,6 +9,10 @@ import { dictionary } from "./data/index";
 import { pSBC } from "./utils/pSBC";
 
 const props = defineProps({
+  keyboardEvents: {
+    type: String,
+    default: "true",
+  },
   title: {
     type: String,
   },
@@ -69,6 +73,8 @@ const keyboard = ref();
 const alert = ref();
 const targetWord = ref(decodeWord(props.word));
 const showResults = ref(false);
+
+const keyboardEvents = props.keyboardEvents === "true";
 
 const bgColor = ref(props.bgColor);
 const textColor = ref(props.textColor);
@@ -198,12 +204,16 @@ function checkWinLose(guess: string, tiles: HTMLDivElement[]) {
 }
 
 function startInteraction() {
-  document.addEventListener("keydown", handleKeyPress);
+  if (keyboardEvents) {
+    window.addEventListener("keydown", handleKeyPress);
+  }
   keyboard.value.startInteraction();
 }
 
 function stopInteraction() {
-  document.removeEventListener("keydown", handleKeyPress);
+  if (keyboardEvents) {
+    window.removeEventListener("keydown", handleKeyPress);
+  }
   keyboard.value.stopInteraction();
 }
 
@@ -247,7 +257,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  stopInteraction();
+  if (keyboardEvents) {
+    stopInteraction();
+  }
 });
 </script>
 

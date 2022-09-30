@@ -8,7 +8,9 @@ export default defineConfig({
       entry: "src/main.ts",
       name: "WordleForGood",
       fileName: "wordle-for-good",
+      formats: ["es", "cjs"],
     },
+    target: "esnext",
   },
   plugins: [
     vue({
@@ -19,4 +21,7 @@ export default defineConfig({
       },
     }),
   ],
+  define: {
+    "process.env": {},
+  },
 });
