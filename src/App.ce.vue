@@ -3,8 +3,13 @@ import Keyboard from "./components/Keyboard.ce.vue";
 import Gameboard from "./components/Gameboard.ce.vue";
 import Header from "./components/Header.ce.vue";
 import Alert from "./components/Alert.ce.vue";
-import Results from "./components/Results.ce.vue";
-import { onBeforeMount, onMounted, onUnmounted, ref } from "vue";
+import {
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+  onUnmounted,
+  ref,
+} from "vue";
 import { dictionary } from "./data/index";
 import { pSBC } from "./utils/pSBC";
 
@@ -19,6 +24,12 @@ const props = defineProps({
   word: {
     type: String,
     required: true,
+  },
+  successSelector: {
+    type: String,
+  },
+  failureSelector: {
+    type: String,
   },
   bgColor: {
     type: String,
@@ -68,17 +79,46 @@ const decodeWord = (word: string) => {
     .join("");
 };
 
+const getSelector = (selector: string | undefined): HTMLElement => {
+  const element = selector ? document.querySelector(selector) : null;
+  if (element) {
+    return element as HTMLElement;
+  }
+  // If the selector was not provided, let's try to guess it
+  // Move up the DOM tree and adjacent element
+  let parent = document.querySelector("wordle-for-good")
+    ?.parentElement as Element;
+  // If parent has no siblings, move up the DOM tree until we find the next adjacent element
+  while (
+    parent &&
+    parent?.parentElement?.tagName !== "BODY" &&
+    !parent?.nextElementSibling
+  ) {
+    // If so, return the next sibling
+    parent = parent?.parentElement as HTMLElement;
+  }
+  return (
+    (parent?.nextElementSibling as HTMLElement) ||
+    (parent?.previousElementSibling as HTMLElement) ||
+    parent
+  );
+};
+
 const gameboard = ref();
 const keyboard = ref();
 const alert = ref();
 const targetWord = ref(decodeWord(props.word));
-const showResults = ref(false);
 
 const keyboardEvents = props.keyboardEvents === "true";
 
 const bgColor = ref(props.bgColor);
 const textColor = ref(props.textColor);
 const height = ref(props.height);
+
+const successSelector = getSelector(props.successSelector);
+const failureSelector = props.failureSelector
+  ? getSelector(props.failureSelector)
+  : successSelector;
 
 const tileBorderColor = ref(props.tileBorderColor);
 // const tileBorderActiveColor = ref(pSBC(0.2, tileBorderColor.value));
@@ -92,6 +132,10 @@ const tileTextColor = ref(props.tileTextColor);
 const keyBgColor = ref(props.keyBgColor);
 const keyTextColor = ref(props.keyTextColor);
 const keyTextSize = ref(props.keyTextSize);
+
+const isGameFinished = ref(false);
+const gameResults = ref(null);
+const gameShareTiles = ref(null);
 
 const WORD_LENGTH = 5;
 const FLIP_ANIMATION_DURATION = 500;
@@ -199,7 +243,7 @@ function checkWinLose(guess: string, tiles: HTMLDivElement[]) {
   if (remainingTiles.length === 0) {
     stopInteraction();
     alert.value.showAlert(targetWord.value.toUpperCase(), null);
-    return openResults();
+    return openResults(false);
   }
 }
 
@@ -214,21 +258,28 @@ function stopInteraction() {
   if (keyboardEvents) {
     window.removeEventListener("keydown", handleKeyPress);
   }
-  keyboard.value.stopInteraction();
+  if (keyboard) keyboard.value.stopInteraction();
 }
 
-function openResults(duration = 2500) {
+function openResults(youWin = true, duration = 2500) {
   setTimeout(() => {
-    showResults.value = true;
+    if (keyboardEvents) {
+      gameResults.value = gameboard.value.getResults();
+      gameShareTiles.value = gameboard.value.getShareTiles();
+      isGameFinished.value = true;
+      if (youWin && successSelector) {
+        successSelector.dataset.wordleForGood = "win";
+        showSection(successSelector);
+      } else if (!youWin && failureSelector) {
+        failureSelector.dataset.wordleForGood = "lose";
+        showSection(failureSelector);
+      }
+    }
   }, duration);
 }
 
-function closeResults() {
-  showResults.value = false;
-}
-
 function shareResults() {
-  const results = gameboard.value.getResults();
+  const results = gameResults.value || "";
 
   if (navigator.share) return navigator.share({ text: results });
 
@@ -236,8 +287,39 @@ function shareResults() {
   navigator.clipboard.writeText(results);
 }
 
-function isMobile() {
-  return /Mobi/i.test(navigator.userAgent);
+function showSection(section: HTMLElement) {
+  if (!section) return;
+  section.innerHTML = section.innerHTML.replaceAll(
+    "[[WFG-TILES]]",
+    `<pre>${gameShareTiles.value}</pre>`
+  );
+  section.innerHTML = section.innerHTML.replaceAll(
+    "[[WFG-WORD]]",
+    targetWord.value.toUpperCase()
+  );
+
+  const shareLinks = section.querySelectorAll("[data-wfd-share]");
+  shareLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      shareResults();
+    });
+  });
+
+  // Animate with JS
+  setTimeout(() => {
+    section.style.overflow = "visible";
+    section.style.maxHeight = "10000px";
+    section.style.opacity = "1";
+    section.style.display = "block";
+  }, 1000);
+}
+
+function hideSection(section: HTMLElement) {
+  // Animate with JS
+  section.style.transition = "max-height 0.5s ease-in-out";
+  section.style.overflow = "hidden";
+  section.style.maxHeight = "0px";
 }
 
 onBeforeMount(() => {
@@ -249,14 +331,16 @@ onBeforeMount(() => {
   if (dictionary.includes(targetWord.value) === false) {
     dictionary.push(targetWord.value);
   }
-  console.log(bgColor.value);
+  // Animate and hide the success & failure selectors
+  if (successSelector && keyboardEvents) hideSection(successSelector);
+  if (failureSelector && keyboardEvents) hideSection(failureSelector);
 });
 
 onMounted(() => {
   startInteraction();
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (keyboardEvents) {
     stopInteraction();
   }
@@ -265,18 +349,19 @@ onUnmounted(() => {
 
 <template>
   <div id="wordleForGood">
-    <Header v-if="!isMobile() && title" :title="title" />
-    <div class="game-wrapper">
-      <Alert ref="alert" />
-      <Results v-if="showResults" @share="shareResults" @close="closeResults" />
-      <Gameboard :title="title" ref="gameboard" />
-      <Keyboard
-        @keyClick="pressKey"
-        @enterClick="submitGuess"
-        @deleteClick="deleteKey"
-        ref="keyboard"
-      />
-    </div>
+    <Header v-if="title" :title="title" />
+    <Alert ref="alert" />
+    <Transition name="slide-up" mode="out-in" appear>
+      <div class="game-wrapper" v-if="!isGameFinished">
+        <Gameboard ref="gameboard" />
+        <Keyboard
+          @keyClick="pressKey"
+          @enterClick="submitGuess"
+          @deleteClick="deleteKey"
+          ref="keyboard"
+        />
+      </div>
+    </Transition>
   </div>
 </template>
 <style lang="scss">

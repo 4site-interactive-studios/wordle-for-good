@@ -2,9 +2,11 @@
 
 .alert-container {
   position: fixed;
-  top: 10vh;
+  top: 40%;
   z-index: 1;
   user-select: none;
+  left: 50%;
+  transform: translateX(-50%);
   .alert {
     background-color: hsl(204, 7%, 85%);
     color: hsl(204, 7%, 15%);

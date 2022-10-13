@@ -1,3 +1,6 @@
+#wordleForGood {
+  position: relative;
+}
 /* Gameboard */
 #gameboard {
   .wrapper {
@@ -67,4 +70,14 @@
   .tile.flip {
     transform: rotateX(90deg);
   }
+}
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: max-height 1s ease;
+  max-height: 3000px;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  max-height: 0;
 }

@@ -22,13 +22,11 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: v-bind("height");
   font-size: clamp(0.5rem, 3vmin, 1rem);
   background-color: v-bind("bgColor");
   color: v-bind("textColor");
   overflow: hidden;
   touch-action: manipulation;
-  min-height: 670px;
 }
 
 .game-wrapper {
@@ -37,7 +35,7 @@ body {
   align-items: center;
   width: 100%;
   max-width: 600px;
-  height: 100%;
+  height: v-bind("height");
   margin: 0 auto;
   padding: 1rem;
   justify-content: space-between;

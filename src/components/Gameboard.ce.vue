@@ -9,6 +9,7 @@ defineExpose({
   nextTile,
   getActiveTiles,
   getResults,
+  getShareTiles,
   shakeTiles,
   danceTiles,
   getRemainingTiles,
@@ -27,6 +28,29 @@ function getActiveTiles() {
 
 function getRemainingTiles() {
   return gameboard.value.querySelectorAll(":not([data-letter])");
+}
+
+function getShareTiles() {
+  const tiles = gameboard.value.querySelectorAll(
+    ".tile[data-state='wrong'], .tile[data-state='wrong-location'], .tile[data-state='correct']"
+  );
+  const resultsArray = [];
+
+  for (const tile of tiles) {
+    if (tile.dataset.state === "wrong") resultsArray.push("⬛️");
+    if (tile.dataset.state === "wrong-location") resultsArray.push("🟨");
+    if (tile.dataset.state === "correct") resultsArray.push("🟩");
+  }
+
+  let results = "";
+
+  for (let i = 0; i < resultsArray.length / 5; i++) {
+    results += `${resultsArray[0 + i * 5]}${resultsArray[1 + i * 5]}${
+      resultsArray[2 + i * 5]
+    }${resultsArray[3 + i * 5]}${resultsArray[4 + i * 5]}
+`;
+  }
+  return results;
 }
 
 function getResults() {
