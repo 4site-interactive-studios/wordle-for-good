@@ -353,7 +353,7 @@ onBeforeUnmount(() => {
     <Alert ref="alert" />
     <Transition name="slide-up" mode="out-in" appear>
       <div class="game-wrapper" v-if="!isGameFinished">
-        <Gameboard ref="gameboard" />
+        <Gameboard ref="gameboard" :title="title" />
         <Keyboard
           @keyClick="pressKey"
           @enterClick="submitGuess"
