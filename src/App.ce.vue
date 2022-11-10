@@ -21,6 +21,9 @@ const props = defineProps({
   title: {
     type: String,
   },
+  shareTitle: {
+    type: String,
+  },
   word: {
     type: String,
     required: true,
@@ -207,7 +210,11 @@ function flipTile(
       if (targetWord.value[index] === letter) {
         tile.dataset.state = "correct";
         key.classList.add("correct");
-      } else if (targetWord.value.includes(letter)) {
+      } else if (
+        targetWord.value.includes(letter) &&
+        (guess[targetWord.value.indexOf(letter)] !== letter ||
+          guess[targetWord.value.lastIndexOf(letter)] !== letter)
+      ) {
         tile.dataset.state = "wrong-location";
         key.classList.add("wrong-location");
       } else {
@@ -233,7 +240,7 @@ function flipTile(
 function checkWinLose(guess: string, tiles: HTMLDivElement[]) {
   if (guess === targetWord.value) {
     stopInteraction();
-    alert.value.showAlert("You win", 2500);
+    // alert.value.showAlert("You win", 2500);
     gameboard.value.danceTiles(tiles);
     return openResults();
   }
@@ -242,7 +249,7 @@ function checkWinLose(guess: string, tiles: HTMLDivElement[]) {
 
   if (remainingTiles.length === 0) {
     stopInteraction();
-    alert.value.showAlert(targetWord.value.toUpperCase(), null);
+    // alert.value.showAlert(targetWord.value.toUpperCase(), null);
     return openResults(false);
   }
 }
@@ -280,8 +287,10 @@ function openResults(youWin = true, duration = 2500) {
 
 function shareResults() {
   const results = gameResults.value || "";
+  const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
 
-  if (navigator.share) return navigator.share({ text: results });
+  if (navigator.share && isMobileDevice)
+    return navigator.share({ text: results });
 
   alert.value.showAlert("Copied results to clipboard", 2500);
   navigator.clipboard.writeText(results);
@@ -353,19 +362,15 @@ onBeforeUnmount(() => {
     <Alert ref="alert" />
     <Transition name="slide-up" mode="out-in" appear>
       <div class="game-wrapper" v-if="!isGameFinished">
-        <Gameboard ref="gameboard" :title="title" />
-        <Keyboard
-          @keyClick="pressKey"
-          @enterClick="submitGuess"
-          @deleteClick="deleteKey"
-          ref="keyboard"
-        />
+        <Gameboard ref="gameboard" :title="title" :share-title="shareTitle" />
+        <Keyboard @keyClick="pressKey" @enterClick="submitGuess" @deleteClick="deleteKey" ref="keyboard" />
       </div>
     </Transition>
   </div>
 </template>
 <style lang="scss">
 @import "./styles/main.scss";
+
 :root {
   --background: v-bind(bgColor);
   --text: v-bind(textColor);

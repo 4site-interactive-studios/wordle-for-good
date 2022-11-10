@@ -4,6 +4,9 @@ const props = defineProps({
   title: {
     type: String,
   },
+  shareTitle: {
+    type: String,
+  },
 });
 defineExpose({
   nextTile,
@@ -58,7 +61,7 @@ function getResults() {
     ".tile[data-state='wrong'], .tile[data-state='wrong-location'], .tile[data-state='correct']"
   );
 
-  const title = props.title || "Wordle For Good";
+  const title = props.shareTitle || props.title;
 
   const resultsArray = [];
 
