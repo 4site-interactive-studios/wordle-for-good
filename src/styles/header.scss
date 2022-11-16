@@ -4,8 +4,35 @@ header {
   justify-content: center;
   align-items: center;
   padding: 1rem 0;
-  color: v-bind("textColor");
   width: 100%;
-  font-size: 2.25rem;
-  text-align: center;
+  h1 {
+    font-size: 2.25rem;
+    text-align: center;
+    color: v-bind("textColor");
+  }
+  .helpButton {
+    position: absolute;
+    right: 10%;
+    // top: 23px;
+    cursor: pointer;
+    color: v-bind("textColor");
+    border: 1px solid v-bind("textColor");
+    border-radius: 10%;
+    background-color: transparent;
+    transition: all 0.2s ease-in-out;
+    line-height: 1;
+    font-family: monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    span {
+      font-size: 1.2rem;
+    }
+    &:hover {
+      background-color: v-bind("textColor");
+      color: #fff;
+    }
+  }
 }

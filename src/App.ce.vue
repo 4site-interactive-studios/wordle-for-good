@@ -3,6 +3,7 @@ import Keyboard from "./components/Keyboard.ce.vue";
 import Gameboard from "./components/Gameboard.ce.vue";
 import Header from "./components/Header.ce.vue";
 import Alert from "./components/Alert.ce.vue";
+import Help from "./components/Help.ce.vue";
 import {
   onBeforeMount,
   onBeforeUnmount,
@@ -106,6 +107,8 @@ const getSelector = (selector: string | undefined): HTMLElement => {
     parent
   );
 };
+
+const showHelp = ref(false);
 
 const gameboard = ref();
 const keyboard = ref();
@@ -331,6 +334,17 @@ function hideSection(section: HTMLElement) {
   section.style.maxHeight = "0px";
 }
 
+function openHelp(duration = 500) {
+  showHelp.value = true;
+}
+function closeHelp() {
+  showHelp.value = false;
+  // Create one day cookie
+  const date = new Date();
+  date.setTime(date.getTime() + 24 * 60 * 60 * 7000);
+  document.cookie = `wfg-help=1; expires=${date.toUTCString()}; path=/`;
+}
+
 onBeforeMount(() => {
   // Check if the target word is a 5 letter word
   if (targetWord.value.length !== 5) {
@@ -347,6 +361,10 @@ onBeforeMount(() => {
 
 onMounted(() => {
   startInteraction();
+  // Check if the help cookie is set
+  if (document.cookie.includes("wfg-help=1") === false) {
+    openHelp();
+  }
 });
 
 onBeforeUnmount(() => {
@@ -358,8 +376,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div id="wordleForGood">
-    <Header v-if="title" :title="title" />
+
+    <Header :title="title" @open-help="openHelp" />
     <Alert ref="alert" />
+    <Help v-if="showHelp" @close="closeHelp" />
     <Transition name="slide-up" mode="out-in" appear>
       <div class="game-wrapper" v-if="!isGameFinished">
         <Gameboard ref="gameboard" :title="title" :share-title="shareTitle" />
