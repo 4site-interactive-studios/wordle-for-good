@@ -24,6 +24,9 @@ You can generate your wordle game using the [Wordle for Good Generator](https://
   text-color="#333333"
   tile-border-color="#888888"
   tile-bg-color="#ffffff"
+  tile-bg-wrong-color="#39393c"
+  tile-bg-wrong-location-color="#b59f3b"
+  tile-bg-correct-color="#538d4e"
   tile-text-color="#333333"
   key-bg-color="#818283"
   key-text-color="#ffffff"
@@ -50,6 +53,9 @@ The wordle game has one main attribute:
 - `text-color` - The text color of the game. If not specified, we will use `#333333`.
 - `tile-border-color` - The border color of the tiles. If not specified, we will use `#888888`.
 - `tile-bg-color` - The background color of the tiles. If not specified, we will use `#ffffff`.
+- `tile-bg-wrong-color` - The background color of the tiles when the user selects the wrong tile. If not specified, we will use `#39393c`.
+- `tile-bg-wrong-location-color` - The background color of the tiles when the user selects the right letter at the wrong location. If not specified, we will use `#b59f3b`.
+- `tile-bg-correct-color` - The background color of the tiles when the user selects the right letter at the right location. If not specified, we will use `#538d4e`.
 - `tile-text-color` - The text color of the tiles. If not specified, we will use `#333333`.
 - `key-bg-color` - The background color of the keyboard keys. If not specified, we will use `#818283`.
 - `key-text-color` - The text color of the keyboard keys. If not specified, we will use `#ffffff`.
@@ -58,6 +64,34 @@ The wordle game has one main attribute:
 - `title` - The title of the game. If not specified, the game will have no Title, but the sharing title will be "Wordle For Good".
 - `success-selector` - The selector of the element that will be shown when the user wins the game. If not specified, we will use our own algorithm to guess the element: We will move up the DOM tree until we find an adjacent sibling of the game.
 - `failure-selector` - The selector of the element that will be shown when the user loses the game. If not specified, we will use the same element as the `success-selector`.
+
+## Merge Tags
+
+You can use merge tags in your content to display the correct word, and the game tiles. You can also use special data attributes for links to trigger the "share" event and to open the game help.
+
+### Word
+
+You can use the merge tag `[[WFG-WORD]]` to display the correct word.
+
+### Tiles
+
+You can use the merge tag `[[WFG-TILES]]` to display the game tiles.
+
+### Share Link
+
+You can use the data attribute `data-wfg-share` to trigger the "share" event. For example:
+
+```html
+<a href="#" data-wfg-share>Share</a>
+```
+
+### Help Link
+
+You can use the data attribute `data-wfg-help` to open the game help. For example:
+
+```html
+<a href="#" data-wfg-help>How to Play</a>
+```
 
 # Development
 

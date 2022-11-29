@@ -55,17 +55,17 @@
   }
 
   .key.wrong {
-    background-color: hsl(240, 2%, 23%);
+    background-color: v-bind("tileBgWrongColor");
     color: white;
   }
 
   .key.wrong-location {
-    background-color: hsl(49, 51%, 47%);
+    background-color: v-bind("tileBgWrongLocationColor");
     color: white;
   }
 
   .key.correct {
-    background-color: hsl(115, 29%, 43%);
+    background-color: v-bind("tileBgCorrectColor");
     color: white;
   }
 }

@@ -51,6 +51,18 @@ const props = defineProps({
     type: String,
     default: "transparent",
   },
+  tileBgWrongColor: {
+    type: String,
+    default: "#39393c",
+  },
+  tileBgWrongLocationColor: {
+    type: String,
+    default: "#b59f3b",
+  },
+  tileBgCorrectColor: {
+    type: String,
+    default: "#538d4e",
+  },
   tileTextColor: {
     type: String,
     default: "#fff",
@@ -69,7 +81,7 @@ const props = defineProps({
   },
   height: {
     type: String,
-    default: "690px",
+    default: "700px",
   },
 });
 
@@ -134,6 +146,10 @@ const tileBorderActiveColor = ref(
 const tileBgColor = ref(props.tileBgColor);
 const tileBgActiveColor = ref(pSBC(-0.5, tileBgColor.value, bgColor.value));
 const tileTextColor = ref(props.tileTextColor);
+
+const tileBgWrongColor = ref(props.tileBgWrongColor);
+const tileBgWrongLocationColor = ref(props.tileBgWrongLocationColor);
+const tileBgCorrectColor = ref(props.tileBgCorrectColor);
 
 const keyBgColor = ref(props.keyBgColor);
 const keyTextColor = ref(props.keyTextColor);
@@ -310,7 +326,7 @@ function showSection(section: HTMLElement) {
     targetWord.value.toUpperCase()
   );
 
-  const shareLinks = section.querySelectorAll("[data-wfd-share]");
+  const shareLinks = section.querySelectorAll("[data-wfg-share]");
   shareLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -334,15 +350,11 @@ function hideSection(section: HTMLElement) {
   section.style.maxHeight = "0px";
 }
 
-function openHelp(duration = 500) {
+function openHelp() {
   showHelp.value = true;
 }
 function closeHelp() {
   showHelp.value = false;
-  // Create one day cookie
-  const date = new Date();
-  date.setTime(date.getTime() + 24 * 60 * 60 * 7000);
-  document.cookie = `wfg-help=1; expires=${date.toUTCString()}; path=/`;
 }
 
 onBeforeMount(() => {
@@ -361,10 +373,13 @@ onBeforeMount(() => {
 
 onMounted(() => {
   startInteraction();
-  // Check if the help cookie is set
-  if (document.cookie.includes("wfg-help=1") === false) {
-    openHelp();
-  }
+  const helpLinks = document.querySelectorAll("[data-wfg-help]");
+  helpLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      openHelp();
+    });
+  });
 });
 
 onBeforeUnmount(() => {
@@ -376,12 +391,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div id="wordleForGood">
-
-    <Header :title="title" @open-help="openHelp" />
     <Alert ref="alert" />
     <Help v-if="showHelp" @close="closeHelp" />
     <Transition name="slide-up" mode="out-in" appear>
       <div class="game-wrapper" v-if="!isGameFinished">
+        <Header :title="title" />
         <Gameboard ref="gameboard" :title="title" :share-title="shareTitle" />
         <Keyboard @keyClick="pressKey" @enterClick="submitGuess" @deleteClick="deleteKey" ref="keyboard" />
       </div>
@@ -399,6 +413,9 @@ onBeforeUnmount(() => {
   --tileBorderActiveColor: v-bind(tileBorderActiveColor);
   --tileBgColor: v-bind(tileBgColor);
   --tileBgActiveColor: v-bind(tileBgActiveColor);
+  --tileBgWrongColor: v-bind(tileBgWrongColor);
+  --tileBgWrongLocationColor: v-bind(tileBgWrongLocationColor);
+  --tileBgCorrectColor: v-bind(tileBgCorrectColor);
   --tileTextColor: v-bind(tileTextColor);
   --keyBgColor: v-bind(keyBgColor);
   --keyTextColor: v-bind(keyTextColor);
