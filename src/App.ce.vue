@@ -231,6 +231,9 @@ function flipTile(
         key.classList.add("correct");
       } else if (
         targetWord.value.includes(letter) &&
+        (guess.lastIndexOf(letter) === guess.indexOf(letter) ||
+          guess.lastIndexOf(letter) !== index
+        ) &&
         (guess[targetWord.value.indexOf(letter)] !== letter ||
           guess[targetWord.value.lastIndexOf(letter)] !== letter)
       ) {
